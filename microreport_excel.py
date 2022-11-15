@@ -13,6 +13,10 @@ motor_komp = '0000'
 """Кол-во циклов включения-выключения мотор-компрессора, раз"""
 dveri = '6005'
 """Кол-во циклов открытия-закрытия дверей, раз"""
+
+path_out = 'out' 
+"""Путь к выходным файлам"""
+
 def datetime_to_int(dt:d.date) -> int:
     """ Формирует measuredatetime для запросов к базе (количество секунд с 1970 до начала дня)
     dt: date"""
@@ -69,14 +73,23 @@ with SSHTunnelForwarder(
             for i in range(8):
                 row_wag[num_wag][dveri][i] = row_wag[num_wag][dveri][i] + int(r[i])
 
-    for row in row_wag:
-        print(row_wag[row])
+    # for row in row_wag:
+    #     print(row_wag[row])
         
     wb = openpyxl.load_workbook('template_microreport.xlsx')
 
     print(wb.sheetnames)
 
+    sheet = wb['За месяц']
+    print(sheet['C2'].value)
 
-    ss = 'Номер вагона:;00000;'
+    sheet['C2'].value = '00001'
+
+    f_out_name = 'Новокосино_'+d.date.today().strftime("%Y_%m_%d")+'.xlsx'
+    if not(os.path.exists(path_out)):
+        os.makedirs(path_out)
+    # file_out = open(file=path_out+'/'+f_out_name,mode='w')
+    wb.save(path_out+'/'+f_out_name)
+    # ss = 'Номер вагона:;00000;'
 
     server.stop()
