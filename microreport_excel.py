@@ -9,7 +9,7 @@ import psycopg2
 
 mes_spis = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь']
 
-probeg = '6003'
+probeg = '6008'
 """Пробег, км"""
 potreb = '6009'
 """Потребление электроэнергии , тысяч кВт*час"""
@@ -121,8 +121,8 @@ def xlsx_report(curs,date_begin:d.date,date_end:d.date,title_period:str,f_out_na
     for row in row_wag:
         num_str = str(num)
         sheet['A'+num_str].value = row
-        sheet['B'+num_str].value = row_wag[row][probeg]
-        sheet['C'+num_str].value = row_wag[row][potreb]
+        sheet['B'+num_str].value = round(row_wag[row][probeg],2)
+        sheet['C'+num_str].value = round(row_wag[row][potreb],2)
         sheet['D'+num_str].value = row_wag[row][motor_komp]
         sheet['E'+num_str].value = row_wag[row][dveri][0]
         sheet['F'+num_str].value = row_wag[row][dveri][1]
@@ -176,8 +176,8 @@ def xlsx_report(curs,date_begin:d.date,date_end:d.date,title_period:str,f_out_na
         for row in row_wag_d[num_sost]:
             num_str = str(num)
             sheet['A'+num_str].value = row
-            sheet['B'+num_str].value = row_wag_d[num_sost][row][probeg]
-            sheet['C'+num_str].value = row_wag_d[num_sost][row][potreb]
+            sheet['B'+num_str].value = round(row_wag_d[num_sost][row][probeg],2)
+            sheet['C'+num_str].value = round(row_wag_d[num_sost][row][potreb],2)
             sheet['D'+num_str].value = row_wag_d[num_sost][row][motor_komp]
             sheet['E'+num_str].value = row_wag_d[num_sost][row][dveri][0]
             sheet['F'+num_str].value = row_wag_d[num_sost][row][dveri][1]
