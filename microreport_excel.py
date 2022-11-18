@@ -22,7 +22,7 @@ buksy = '0010'
 
 path_out = 'out' 
 """Путь к выходным файлам"""
-name_line = 'Новокосино'
+name_line = 'Новогиреево'
 """Наименование линии метрополитена"""
 
 one_day = d.timedelta(days=1)
@@ -257,7 +257,7 @@ with SSHTunnelForwarder(
     date_begin = date_now
     for i in range(args.d):
         date_begin = date_now - d.timedelta(days=i)
-        date_end = date_begin + d.timedelta(days=1)
+        date_end = date_begin + one_day
         f_out_name = name_line+'За сегодня_'+date_begin.strftime("%Y_%m_%d")+"-"+date_end.strftime("%Y_%m_%d")+'.xlsx'
         title_period = 'Суммарные показатели за день с '+date_begin.strftime("%Y.%m.%d")+' по '+date_end.strftime("%Y_%m_%d")
         xlsx_report(curs,date_begin,date_end,title_period,f_out_name)
@@ -275,7 +275,7 @@ with SSHTunnelForwarder(
     date_begin = date_now
     for i in range(args.m):
         print('Месяц')
-        date_end = d.date(date_begin.year,date_begin.month,1) - d.timedelta(days=1)
+        date_end = d.date(date_begin.year,date_begin.month,1) - one_day
         date_begin = d.date(date_end.year,date_end.month,1)
         title_period = 'Суммарные показатели за '+mes_spis[date_begin.month-1]+' месяц'
         f_out_name = name_line+'_'+date_begin.strftime("%Y_%m")+'.xlsx'
