@@ -118,11 +118,11 @@ def xlsx_report(curs,date_begin:d.date,date_end:d.date,title_period:str,f_out_na
                  top=Side(style='thin'),
                  bottom=Side(style='thin'))
 
-    for row in row_wag:
+    for row in sorted(row_wag.keys()):
         num_str = str(num)
         sheet['A'+num_str].value = row
         sheet['B'+num_str].value = round(row_wag[row][probeg],2)
-        sheet['C'+num_str].value = round(row_wag[row][potreb],2)
+        sheet['C'+num_str].value = round((row_wag[row][potreb]/1000),2)
         sheet['D'+num_str].value = row_wag[row][motor_komp]
         sheet['E'+num_str].value = row_wag[row][dveri][0]
         sheet['F'+num_str].value = row_wag[row][dveri][1]
@@ -164,8 +164,8 @@ def xlsx_report(curs,date_begin:d.date,date_end:d.date,title_period:str,f_out_na
 
     sheet = wb['Ежедневно']
     num = 6
-    # print('12312312',row_wag_d.keys())
-    for num_sost in row_wag_d:
+
+    for num_sost in sorted(row_wag_d.keys()):
         num_str = str(num)
         sheet.merge_cells('A'+num_str+':AJ'+num_str)
         sheet['A'+num_str].value = 'Вагон '+num_sost
@@ -177,7 +177,7 @@ def xlsx_report(curs,date_begin:d.date,date_end:d.date,title_period:str,f_out_na
             num_str = str(num)
             sheet['A'+num_str].value = row
             sheet['B'+num_str].value = round(row_wag_d[num_sost][row][probeg],2)
-            sheet['C'+num_str].value = round(row_wag_d[num_sost][row][potreb],2)
+            sheet['C'+num_str].value = round((row_wag_d[num_sost][row][potreb]/1000),2)
             sheet['D'+num_str].value = row_wag_d[num_sost][row][motor_komp]
             sheet['E'+num_str].value = row_wag_d[num_sost][row][dveri][0]
             sheet['F'+num_str].value = row_wag_d[num_sost][row][dveri][1]
