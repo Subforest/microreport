@@ -1,7 +1,6 @@
 import datetime as d
 import os
 import argparse
-from tkinter.filedialog import Open
 
 import openpyxl
 from openpyxl.styles import Border,Alignment, Side, Font
@@ -229,61 +228,43 @@ def xlsx_report(curs,date_begin:d.date,date_end:d.date,title_period:str,f_out_na
 
 if not(os.path.exists(path_out)):
     os.makedirs(path_out)
-
-
-# Для туннелирования. для сервера - убрать
-from sshtunnel import SSHTunnelForwarder
-
-with SSHTunnelForwarder(
-     ('admin.mip.tools', 30022),
-     ssh_private_key="/home/apodlesskih/.ssh/ssh_mip_ns_user",
-     ### in my case, I used a password instead of a private key
-     ssh_username="ns-user",
-    #  ssh_password="<mypasswd>",
-     remote_bind_address=('localhost', 5432)) as server:
-    server.start()
-    print ("server connected")
-# Конец туннелирования 
-    
-    params = {
-         'database': 'traindb',
-         'user': 'trainuser',
-         'password': 'train',
-         'host': 'localhost',
-         'port': server.local_bind_port
-         }
-    #  params = settings.params_postgres
-    conn = psycopg2.connect(**params)
-    curs = conn.cursor()
-    print ("database connected")
-
-    date_now = d.date.today()
+  
+params = {
+     'database': 'traindb',
+     'user': 'trainuser',
+     'password': 'train',
+     'host': 'localhost',
+     'port': 5432
+     }
+#  Для связи с базой на тестовом сервере нужно открыть ssh туннель     
+#  ssh -L 5432:127.0.0.1:5432 ns-user@admin.mip.tools -p 30022
+conn = psycopg2.connect(**params)
+curs = conn.cursor()
+print ("database connected")
+date_now = d.date.today()
 # -------------------------
-    date_begin = date_now
-    for i in range(args.d):
-        date_begin = date_now - d.timedelta(days=i)
-        date_end = date_begin + one_day
-        f_out_name = name_line+'За сегодня_'+date_begin.strftime("%Y_%m_%d")+"-"+date_end.strftime("%Y_%m_%d")+'.xlsx'
-        title_period = 'Суммарные показатели за день с '+date_begin.strftime("%Y.%m.%d")+' по '+date_end.strftime("%Y_%m_%d")
-        xlsx_report(curs,date_begin,date_end,title_period,f_out_name)
+date_begin = date_now
+for i in range(args.d):
+    date_begin = date_now - d.timedelta(days=i)
+    date_end = date_begin + one_day
+    f_out_name = name_line+'За сегодня_'+date_begin.strftime("%Y_%m_%d")+"-"+date_end.strftime("%Y_%m_%d")+'.xlsx'
+    title_period = 'Суммарные показатели за день с '+date_begin.strftime("%Y.%m.%d")+' по '+date_end.strftime("%Y_%m_%d")
+    xlsx_report(curs,date_begin,date_end,title_period,f_out_name)
 #--------------------------
-    date_begin = date_now
-    for i in range(args.w):
-        print("неделя")
-        week_day = date_begin.weekday()
-        date_end = date_begin - d.timedelta(days=week_day+1)
-        date_begin = date_end - d.timedelta(days=6)
-        f_out_name = name_line+'_'+date_begin.strftime("%Y_%m_%d")+"-"+date_end.strftime("%Y_%m_%d")+'.xlsx'
-        title_period = 'Суммарные показатели за неделю с '+date_begin.strftime("%Y.%m.%d")+' по '+date_end.strftime("%Y_%m_%d")
-        xlsx_report(curs,date_begin,date_end,title_period,f_out_name)
-
-    date_begin = date_now
-    for i in range(args.m):
-        print('Месяц')
-        date_end = d.date(date_begin.year,date_begin.month,1) - one_day
-        date_begin = d.date(date_end.year,date_end.month,1)
-        title_period = 'Суммарные показатели за '+mes_spis[date_begin.month-1]+' месяц'
-        f_out_name = name_line+'_'+date_begin.strftime("%Y_%m")+'.xlsx'
-        xlsx_report(curs,date_begin,date_end,title_period,f_out_name)
-
-    server.stop()
+date_begin = date_now
+for i in range(args.w):
+    print("неделя")
+    week_day = date_begin.weekday()
+    date_end = date_begin - d.timedelta(days=week_day+1)
+    date_begin = date_end - d.timedelta(days=6)
+    f_out_name = name_line+'_'+date_begin.strftime("%Y_%m_%d")+"-"+date_end.strftime("%Y_%m_%d")+'.xlsx'
+    title_period = 'Суммарные показатели за неделю с '+date_begin.strftime("%Y.%m.%d")+' по '+date_end.strftime("%Y_%m_%d")
+    xlsx_report(curs,date_begin,date_end,title_period,f_out_name)
+date_begin = date_now
+for i in range(args.m):
+    print('Месяц')
+    date_end = d.date(date_begin.year,date_begin.month,1) - one_day
+    date_begin = d.date(date_end.year,date_end.month,1)
+    title_period = 'Суммарные показатели за '+mes_spis[date_begin.month-1]+' месяц'
+    f_out_name = name_line+'_'+date_begin.strftime("%Y_%m")+'.xlsx'
+    xlsx_report(curs,date_begin,date_end,title_period,f_out_name)
