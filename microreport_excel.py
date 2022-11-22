@@ -247,7 +247,7 @@ date_begin = date_now
 for i in range(args.d):
     date_begin = date_now - d.timedelta(days=i)
     date_end = date_begin + one_day
-    f_out_name = name_line+'За сегодня_'+date_begin.strftime("%Y_%m_%d")+"-"+date_end.strftime("%Y_%m_%d")+'.xlsx'
+    f_out_name = name_line+'_За день_'+date_begin.strftime("%Y_%m_%d")+"-"+date_end.strftime("%Y_%m_%d")+'.xlsx'
     title_period = 'Суммарные показатели за день с '+date_begin.strftime("%Y.%m.%d")+' по '+date_end.strftime("%Y_%m_%d")
     xlsx_report(curs,date_begin,date_end,title_period,f_out_name)
 #--------------------------
