@@ -8,7 +8,6 @@ from openpyxl.styles import Border,Alignment, Side, Font
 import psycopg2
 
 mes_spis = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь']
-
 probeg = '6008'
 """Пробег, км"""
 potreb = '6009'
@@ -19,6 +18,11 @@ dveri = '6005'
 """Кол-во циклов открытия-закрытия дверей, раз"""
 buksy = '0010'
 """Подробный статус неисправностей букс"""
+
+sql_head = "select wagonid,msgid,value from wagondata w where wagonid <> '30000' and msgid in ('"+probeg+"','"+potreb+"','"+motor_komp+"','"+dveri+"','"+buksy+"') and "
+"""Начало SQL запроса с основными условиями"""
+sql_tail = " order by wagonid ,msgid ,measuredatetime"
+"""Конец SQL запроса с постобработкой"""
 
 path_out = 'out' 
 """Путь к выходным файлам"""
@@ -57,9 +61,10 @@ def xlsx_report(curs,date_begin:d.date,date_end:d.date,title_period:str,f_out_na
 
     # Перебираем по одному дню, начиная с даты начала
     while date_begin<date_end:
-        q = ("select wagonid,msgid,value from wagondata w where wagonid <> '30000'  and "  
-            "measuredatetime >= "+datetime_to_int_str(date_begin)+" and measuredatetime <"+datetime_to_int_str(date_begin+one_day)
-            +" order by wagonid ,msgid ,measuredatetime")
+        q = (sql_head  
+            +"measuredatetime >= "+datetime_to_int_str(date_begin)
+            +" and measuredatetime <"+datetime_to_int_str(date_begin+one_day)
+            +sql_tail)
         curs.execute(q)
         num_wag=''
         date_b_str=date_begin.strftime("%Y.%m.%d")
